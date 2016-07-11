@@ -1,0 +1,5 @@
+---
+# handlers file for steamulo-teleport-installer
+
+- name: restart teleport
+  service: name=teleport state=restarted

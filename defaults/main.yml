@@ -1,0 +1,16 @@
+---
+# defaults file for steamulo-teleport-installer
+
+teleport_auth_name: 'admin.steamulo.org'
+teleport_conf_dir: /opt/teleport/
+teleport_conf_file: teleport.yaml
+teleport_ssh_service: True
+teleport_auth_service: False
+teleport_proxy_service: False
+teleport_log_verbosity: 'INFO'
+teleport_node_role_label: ''
+teleport_https_dir: /etc/teleport/
+teleport_https_key_file: teleport.key
+teleport_https_cert_file: teleport.crt
+teleport_version: 'v1.0.0'
+teleport_node_name: "{{ ansible_nodename }}"

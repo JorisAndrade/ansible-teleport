@@ -1,0 +1,30 @@
+teleport:
+  {% if teleport_auth_name %}auth_token: {{ teleport_static_token }}
+  auth_servers: [{{ teleport_auth_name }}]{% endif %} 
+  nodename: {{ teleport_node_name }}
+  log:
+    output: stderr
+    severity: {{ teleport_log_verbosity }}
+
+auth_service:
+   enabled: {% if teleport_auth_service %}yes{% else %}no{% endif %} 
+   {% if teleport_auth_service %}
+   tokens: 
+       - "node:{{ teleport_static_token }}"
+   {% endif %}
+
+ssh_service:
+  enabled: {% if teleport_ssh_service %}yes{% else %}no{% endif %} 
+  labels:
+    role: {{ teleport_node_role_label }}
+  commands:
+    - name: kernel
+      command: [/bin/uname, -r]
+      period: 5m
+
+proxy_service:
+  enabled: {% if teleport_proxy_service %}yes{% else %}no{% endif %}
+  {% if teleport_proxy_service %}
+  https_key_file: {{ teleport_https_dir }}{{ teleport_https_key_file }}
+  https_cert_file: {{ teleport_https_dir }}{{ teleport_https_cert_file }}
+  {% endif %}

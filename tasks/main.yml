@@ -1,0 +1,38 @@
+---
+# tasks file for steamulo-teleport-installer
+
+- name: create https directory
+  file:
+    path: "{{ teleport_https_dir }}" 
+    state: directory
+
+- name: Create ssl key
+  copy:
+    content: "{{ teleport_https_key_content|trim }}"
+    dest: "{{ teleport_https_dir }}{{ teleport_https_key_file }}"
+  when: teleport_https_key_content is defined
+
+- name: Create ssl cert
+  copy:
+    content: "{{ teleport_https_cert_content|trim }}"
+    dest: "{{ teleport_https_dir }}{{ teleport_https_cert_file }}"
+  when: teleport_https_cert_content is defined
+
+- name: create https directory
+  file:
+    path: "/tmp/teleport-{{ teleport_version }}" 
+    state: directory
+
+#- name: Download Teleport
+#  unarchive: src=https://github.com/gravitational/teleport/releases/download/{{ teleport_version }}/teleport-{{ teleport_version }}-linux-amd64-bin.tar.gz dest=/tmp/teleport-{{ teleport_version }} copy=no
+
+- name: Install teleport
+  shell: make -C /tmp/teleport-{{ teleport_version }}/teleport install
+
+- name: Generate teleport config file
+  template: src="teleport.yaml.j2" dest="{{ teleport_conf_dir }}{{ teleport_conf_file }}"
+
+- name: Generate init.d config file
+  become: true
+  template: src="teleport.init.j2" dest="/etc/init.d/teleport" mode=0755
+  notify: restart teleport
